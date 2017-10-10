@@ -10,7 +10,7 @@ clear all; close all; clc;
 init('VAMR/exercise01');
 data = loadData();
 
-%% superimpose projected grid points and checkerboard
+%% superimpose projected grid points and checkerboard on undistorted image
 
 % generate grid points in real world cooridnate frame
 Pw = generateRealWorldPoints('grid');
@@ -47,12 +47,22 @@ figure(1); clf; hold on;
     imshow(data.img_0001_u,'InitialMagnification','fit');
     line(x_vec,y_vec,'LineWidth',3,'Color','r')
 
-%% radial distortion
+%% superimpose projected grid points and checkerboard on distorted image
 
+% generate grid points in real world cooridnate frame
+Pw = generateRealWorldPoints('grid');
+
+% get relative position and orientation
+pose = data.poses(1,:);
+RT = poseVectorToTransformationMatrix(pose);
+
+% project points to pixel coordinate system
+Pp = projectPoints(Pw, data.K, RT, data.D);
 
 % plot
 figure(1); clf; hold on;
     imshow(data.img_0001,'InitialMagnification','fit');
+    scatter(Pp(:,1),Pp(:,2),'*r');
 
 
 
