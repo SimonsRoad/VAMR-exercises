@@ -12,7 +12,7 @@ eval(['cd ~/Documents/MATLAB/',folder])
 addpath(genpath('data'))
 
 % apply command from control center
-if param.dockFigures
+if param.dockFig
     set(0,'DefaultFigureWindowStyle','docked');
 else
     set(0,'DefaultFigureWindowStyle','normal');

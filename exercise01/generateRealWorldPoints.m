@@ -1,8 +1,15 @@
 function Pw = generateRealWorldPoints(option)
+% Pw = generateRealWorldPoints(option);
+% generates Points in real world coordinate system
+% Input:
+%   option  'grid' or 'cube'
+% Output:
+%   Pw      data points, Pw = [x1,y1,z1; x2,y2,z2; ...]
+% Samuel Nyffenegger, 10.10.17
 
 
 if strcmp(option,'grid')
-    % generate matrix of checkerboard corners Pw = [x1,y1,z1; x2,y2,z2; ...]
+    %% generate checkerboard grid 
     
     % get data from data container
     spacing = param.spacing;
@@ -23,7 +30,24 @@ if strcmp(option,'grid')
     return;
     
 elseif strcmp(option,'cube')
-    % tba
+    %% generate corners of the cube 
+    
+    % get data from data container
+    spacing = param.spacing;
+    x = param.cube_x;
+    y = param.cube_y;
+    a = param.cube_a;
+
+    % generate corners of cube
+    Pw = spacing*...
+        [x,     y,     0; ...
+         x+a,   y,     0; ...
+         x,     y+a,   0; ...
+         x+a,   y+a,   0; ...
+         x,     y,     -a; ...
+         x+a,   y,     -a; ...
+         x,     x+a,   -a; ...
+         x+a,   y+a,   -a]; 
     
 else
     error('option not assigned correctly');

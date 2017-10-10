@@ -4,7 +4,11 @@
 classdef param
    properties (Constant)
         % control parameters 
-        dockFigures = true; % dock all figures
+        dockFig = true;     % dock all figures
+        cube_x = 2;         % x position [units] of top left corner
+        cube_y = 2;         % y position [units] of top left corner
+        cube_a = 2;         % length of cube [units]
+        
         
         % parameters
         spacing = 0.04;     % length of checkerboard square[m]
