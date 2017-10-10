@@ -10,31 +10,22 @@ clear all; close all; clc;
 init('VAMR/exercise01');
 data = loadData();
 
-%%  projective equation: grid on checkerboard
+%% superimpose projected grid points on checkerboard
 
-% get image from data container
-img = data.img_0001_u;
+% generate grid points in real world cooridnate frame
+Pw = generateRealWorldPoints('grid');
 
-% generate matrix of checkerboard corners Pw = [x1,y1,z1; x2,y2,z2; ...]
-spacing = 0.04; % [cm]
-dim_checkerboard = [8; 5];
-points_x = spacing*[0:dim_checkerboard(1)]; points_x = points_x(:);
-points_y = spacing*[0:dim_checkerboard(2)]; points_y = points_y(:);
-[Pw_y, Pw_x] = meshgrid(points_y,points_x); Pw_x = Pw_x(:); Pw_y = Pw_y(:);
-Pw = zeros(size(Pw_x,1),3);
-Pw(:,1) = Pw_x'; 
-Pw(:,2) = Pw_y'; 
-Pw(:,3) = 0; 
-
-% superimpose the projected corners to the undistorted image
-pose = poses(1,:);
+% get relative position and orientation
+pose = data.poses(1,:);
 RT = poseVectorToTransformationMatrix(pose);
-points = projectPoints(Pw, K, RT);
+
+% project points to pixel coordinate system
+Pp = projectPoints(Pw, data.K, RT);
 
 % plot
 figure(1); clf; hold on;
-    imshow(img,'InitialMagnification','fit');
-    scatter(points(:,1),points(:,2),'*r');
+    imshow(data.img_0001_u,'InitialMagnification','fit');
+    scatter(Pp(:,1),Pp(:,2),'*r');
 
 %% generate cube
 clc; 
@@ -59,15 +50,15 @@ Pw = spacing*[cube.x,           cube.y       , 0; ...
 % project corner to image plane
 pose = poses(1,:);
 RT = poseVectorToTransformationMatrix(pose);
-points = projectPoints(Pw, K, RT);
+Pp = projectPoints(Pw, K, RT);
 
 % generate line to draw the cube
-x_vec = [points(1,1),points(2,1),points(4,1),points(3,1),points(1,1), ...
-         points(5,1),points(6,1),points(8,1),points(7,1),points(5,1), points(1,1), ...
-         points(2,1),points(6,1),points(8,1),points(4,1),points(3,1), points(7,1)];
-y_vec = [points(1,2),points(2,2),points(4,2),points(3,2),points(1,2), ...
-         points(5,2),points(6,2),points(8,2),points(7,2),points(5,2), points(1,2)...
-         points(2,2),points(6,2),points(8,2),points(4,2),points(3,2), points(7,2)];
+x_vec = [Pp(1,1),Pp(2,1),Pp(4,1),Pp(3,1),Pp(1,1), ...
+         Pp(5,1),Pp(6,1),Pp(8,1),Pp(7,1),Pp(5,1), Pp(1,1), ...
+         Pp(2,1),Pp(6,1),Pp(8,1),Pp(4,1),Pp(3,1), Pp(7,1)];
+y_vec = [Pp(1,2),Pp(2,2),Pp(4,2),Pp(3,2),Pp(1,2), ...
+         Pp(5,2),Pp(6,2),Pp(8,2),Pp(7,2),Pp(5,2), Pp(1,2)...
+         Pp(2,2),Pp(6,2),Pp(8,2),Pp(4,2),Pp(3,2), Pp(7,2)];
 
 % plot
 figure(1); clf; hold on;

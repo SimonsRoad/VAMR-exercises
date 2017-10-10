@@ -8,6 +8,8 @@ classdef param
         
         % parameters
         spacing = 0.04;     % length of checkerboard square[m]
+        n_units_x = 8;      % number of checkerboards in x direction
+        n_units_y = 5;      % number of checkerboards in y direction
    
    end
 end
