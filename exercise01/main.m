@@ -4,37 +4,16 @@
 %   Samuel Nyffenegger
 %   09.10.2017
 
-%%  control center
+%%  calculations
+
 clear all; close all; clc;
-dockFigures = true;
-
-
-%%  initialize
-
-% change path and add subfolders
-cd '~/Documents/MATLAB/VAMR/exercies01/'
-addpath(genpath('data'))
-
-% load camera data and poses
-K = load('data/K.txt');
-D = load('data/D.txt');
-poses = load('data/poses.txt'); 
-
-% apply command from control center
-if dockFigures
-    set(0,'DefaultFigureWindowStyle','docked');
-else
-    set(0,'DefaultFigureWindowStyle','normal');
-end
+init('VAMR/exercise01');
+data = loadData();
 
 %%  projective equation: grid on checkerboard
-clc;
-showImage = true;
 
-% read first grey undistorted image (and show it)
-img = imread('data/images_undistorted/img_0001.jpg');
-img = rgb2gray(img);
-if showImage; figure(1); imshow(img,'InitialMagnification','fit'); end;
+% get image from data container
+img = data.img_0001_u;
 
 % generate matrix of checkerboard corners Pw = [x1,y1,z1; x2,y2,z2; ...]
 spacing = 0.04; % [cm]
@@ -74,6 +53,8 @@ Pw = spacing*[cube.x,           cube.y       , 0; ...
               cube.x+cube.a,    cube.y       , -cube.a; ...
               cube.x,           cube.y+cube.a, -cube.a; ...
               cube.x+cube.a,    cube.y+cube.a, -cube.a]; 
+
+          
 
 % project corner to image plane
 pose = poses(1,:);
