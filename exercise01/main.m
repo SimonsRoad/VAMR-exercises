@@ -64,7 +64,7 @@ figure(1); clf; hold on;
     imshow(data.img_0001,'InitialMagnification','fit');
     scatter(Pp(:,1),Pp(:,2),'*r');
 
-
+%% undistortd distorted image
 
 
 
