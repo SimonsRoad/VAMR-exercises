@@ -50,6 +50,11 @@ figure(1); clf; hold on;
 %% radial distortion
 
 
+% plot
+figure(1); clf; hold on;
+    imshow(data.img_0001,'InitialMagnification','fit');
+
+
 
 
 
