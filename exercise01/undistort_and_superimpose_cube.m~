@@ -1,0 +1,19 @@
+function undistort_and_superimpose_cube()
+% undistort_and_superimpose_cube();
+% undistorts images and superimposes a cube
+% Input:
+%   Files in data/images/img_xxxx.jpg
+% Output:
+%   Files in data/images_undistorted/img_xxxx.jpg
+% Samuel Nyffenegger, 12.10.17
+
+%% 
+
+for i = 1:param.n_frames
+    
+    
+    
+end
+
+
+end

@@ -13,7 +13,7 @@ data.D = load('data/D.txt');
 data.poses = load('data/poses.txt'); 
 
 % load undistorted first image
-data.img_0001_u = rgb2gray(imread('data/images_undistorted/img_0001.jpg'));
+data.img_0001_u = rgb2gray(imread('data/images_undistorted/first_image.jpg'));
 
 % load distorted first image
 data.img_0001 = rgb2gray(imread('data/images/img_0001.jpg'));

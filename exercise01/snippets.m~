@@ -1,0 +1,10 @@
+%%
+clc
+fprintf(['img_d = rgb2gray(imread(''data/images/img_%04.0f.jpg''));'],4)
+fprintf('\n')
+
+%%
+
+eval(['img_d = rgb2gray(imread(''data/images/img_',num2str(0001,'%04.0f'),'.jpg''));'])
+
+
