@@ -1,4 +1,4 @@
-function [x_vec, y_vec] = helper_CubeLineCoordinates(Pp)
+function [x_vec, y_vec, z_vec] = helper_CubeLineCoordinates(Pp)
 % [x_vec, y_vec] = helper_CubeLineCoordinates(Pp);
 % combines points of cube to draw it
 % Input:
@@ -18,4 +18,15 @@ y_vec = [Pp(1,2),Pp(2,2),Pp(4,2),Pp(3,2),Pp(1,2), ...
          Pp(5,2),Pp(6,2),Pp(8,2),Pp(7,2),Pp(5,2), Pp(1,2)...
          Pp(2,2),Pp(6,2),Pp(8,2),Pp(4,2),Pp(3,2), Pp(7,2)];
      
+     
+ % rearange and round
+ N = length(x_vec);
+ z_vec = zeros(2*N,1);
+ 
+for i = 1:N
+   z_vec(2*i-1) = round(x_vec(i));
+   z_vec(2*i) = round(y_vec(i));
+end
+ 
+ 
 end

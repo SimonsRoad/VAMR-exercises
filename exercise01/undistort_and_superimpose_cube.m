@@ -13,7 +13,7 @@ fprintf(['Starting to undistort images and superimpose a cube on ', ...
 
 for i = 1:param.n_frames
     % print status message
-    fprintf(['\tUndistort image ',num2str(i),' of ',num2str(param.n_frames),'\n'])
+    fprintf(['\tPreparing image ',num2str(i),' of ',num2str(param.n_frames),'\n'])
     
     % load image
     eval(['img_d = rgb2gray(imread(''data/images/img_',num2str(i,'%04.0f'),'.jpg''));'])
@@ -32,12 +32,16 @@ for i = 1:param.n_frames
     Pp = projectPoints(Pw, data.K, RT);
 
     % connect points to a cube
-    [x_vec, y_vec] = helper_CubeLineCoordinates(Pp);
-
+    [~, ~, z_vec] = helper_CubeLineCoordinates(Pp);
+        
+    % draw cube on image
+    % img_u = insertShape(img_u,'Line',[0 0 100 100],'LineWidth',3,'Color','red');
+    img_u = insertShape(img_u,'Line',z_vec','LineWidth',4,'Color','red');
+    
     % plot
     figure(i); clf; hold on;
         imshow(img_u,'InitialMagnification','fit');
-        line(x_vec,y_vec,'LineWidth',3,'Color','r')
+        % line(x_vec,y_vec,'LineWidth',3,'Color','r')
 
     % save image
     eval(['imwrite(img_u,''data/images_undistorted/img_',num2str(2,'%04.0f'),'.jpg'');']);
