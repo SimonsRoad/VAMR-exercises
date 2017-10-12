@@ -80,10 +80,12 @@ figure(2); clf; hold on;
     imshowpair(img_u_i,img_u_solution,'diff')
     
 %% create video: undistort images and superimpose with cube
+clc
 
 % undistort images and superimpose cube
-undistort_and_superimpose_cube();
+undistort_and_superimpose_cube(data);
 
-
+% convert image frames to video
+generate_video();
 
 

@@ -5,3 +5,6 @@ clc
 
 eval(['imwrite(img_u,''data/images_undistorted/img_',num2str(2,'%04.0f'),'.jpg'');'])
 
+%%
+
+openExample('matlab_featured/ImagesAndVideoExample')

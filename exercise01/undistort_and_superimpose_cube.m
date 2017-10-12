@@ -1,8 +1,9 @@
-function undistort_and_superimpose_cube()
-% undistort_and_superimpose_cube();
+function undistort_and_superimpose_cube(data)
+% undistort_and_superimpose_cube(data);
 % undistorts images and superimposes a cube
 % Input:
 %   Files in data/images/img_xxxx.jpg
+%   data    struct containing K, D and poses
 % Output:
 %   Files in data/images_undistorted/img_xxxx.jpg
 % Samuel Nyffenegger, 12.10.17
@@ -36,7 +37,7 @@ for i = 1:param.n_frames
         
     % draw cube on image
     % img_u = insertShape(img_u,'Line',[0 0 100 100],'LineWidth',3,'Color','red');
-    img_u = insertShape(img_u,'Line',z_vec','LineWidth',4,'Color','red');
+    % img_u = insertShape(img_u,'Line',z_vec','LineWidth',4,'Color','red');
     
     % plot
     figure(i); clf; hold on;
@@ -44,7 +45,7 @@ for i = 1:param.n_frames
         % line(x_vec,y_vec,'LineWidth',3,'Color','r')
 
     % save image
-    eval(['imwrite(img_u,''data/images_undistorted/img_',num2str(2,'%04.0f'),'.jpg'');']);
+    eval(['imwrite(img_u,''data/images_undistorted/img_',num2str(i,'%04.0f'),'.jpg'');']);
      
 end
 
