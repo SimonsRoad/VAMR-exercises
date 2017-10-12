@@ -71,12 +71,12 @@ img_d = data.img_0001;
 img_u_solution = data.img_0001_u;
 
 % undistort image
-img_u_NN = undistort_image(img_d, data.K, data.D);
+img_u_NN = undistort_image(img_d, data.K, data.D,'NN');
+img_u_NN = undistort_image(img_d, data.K, data.D,'NN');
+
 
 % plot
 figure(1); clf; hold on;
-    imshow(img_u,'InitialMagnification','fit');
-figure(2); clf; hold on;
     imshowpair(img_u_NN,img_u_solution,'diff')
     
     
