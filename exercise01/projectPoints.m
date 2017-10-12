@@ -50,10 +50,10 @@ else
         % apply lens distortion
         r = sqrt(p(1).^2 + p(2).^2);
         p_d = (1 + D(1)*r.^2 + D(2)*r.^4) * p; 
+        
+        % get discretized pixel coordinates 
         p_d_tilde = [p_d;1];
         p_tilde = K*p_d_tilde; 
-
-        % get discretized pixel coordinates 
         u = p_tilde(1)/p_tilde(3);
         v = p_tilde(2)/p_tilde(3);
 

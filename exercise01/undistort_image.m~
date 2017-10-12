@@ -32,21 +32,17 @@ for u_d = 1:Wx
                 
         % correct for lens distorsion
         r = sqrt(x_d.^2 + y_d.^2);
-        p0 = ones(3,1);
-        p0(1:2) = 1/(1 + D(1)*r.^2 + D(2)*r.^4) * p0_d(1:2); 
-             
+        p0 = 1/(1 + D(1)*r.^2 + D(2)*r.^4) * p0_d(1:2); p0 
+        
         % get discretized pixel coordinates 
         pC = K*p0; 
-        u = round(pC(1)/pC(3));
-        v = round(pC(2)/pC(3));
-        
-        % fprintf(['u_d=',num2str(u_d),', v_d=',num2str(v_d),' u=',num2str(u),', v=',num2str(v),', r=',num2str(r),'\n'])
+        u = pC(1)/pC(3);
+        v = pC(2)/pC(3);
         
         % update rounded distorted pixel coordinate 
-        if 0<u && u<=Wx && 0<v && v<=Wy
-            img_u(round(v),round(u)) = img_d(v_d,u_d);
-        end
+        img_u(round(v),round(u)) = img_d(v_d,u_d);
                 
+        fprintf(['u_d=',num2str(u_d),', v_d=',num2str(v_d),' u=',num2str(u),', v=',num2str(v),', r=',num2str(r),'\n'])
     end
 end
 

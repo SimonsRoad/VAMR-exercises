@@ -65,7 +65,20 @@ figure(1); clf; hold on;
     scatter(Pp(:,1),Pp(:,2),'*r');
 
 %% undistortd distorted image
+clc
+img_d = data.img_0001;
+
+img_u = undistort_image(img_d, data.K, data.D);
 
 
+%% plot
+figure(1); clf; hold on;
+    imshow(img_d,'InitialMagnification','fit');
 
-
+    %%
+    hold off;
+    imshow(img_u,'InitialMagnification','fit');
+    
+    %%
+    imshow(data.img_0001_u,'InitialMagnification','fit');
+    
