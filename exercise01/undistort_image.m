@@ -1,10 +1,11 @@
-function  img_u = undistort_image(img_d, K, D)
+function  img_u = undistort_image(img_d, K, D, method)
 % img_u = undistort_image(img_d, K, D);
 % undistorts an image
 % Input:
 %   img_d   distorted image
 %   K       Camera matrix
 %   D       distortion model, two parameters
+%   method  'neighbour' or 'interpolation' 
 % Output:
 %   img_u   undistorted image
 % Samuel Nyffenegger, 10.10.17
@@ -30,13 +31,33 @@ for u = 1:Wx
         
         % distorted homogeneous Discretizised pixel coordinated (u_d, v_d)
         p_D_d = K*p_N_d;
-             
-        % closest neighbour approach
-        u_d = round(p_D_d(1)/p_D_d(3)); 
-        v_d = round(p_D_d(2)/p_D_d(3)); 
         
-        % update through backward warping
-        img_u(v,u) = img_d(v_d,u_d);
+        if strcmp(method,'neighbour')
+            % closest neighbour approach
+            u_d = round(p_D_d(1)/p_D_d(3)); 
+            v_d = round(p_D_d(2)/p_D_d(3));
+            
+            % update through backward warping
+            img_u(v,u) = img_d(v_d,u_d);
+
+        elseif strcmp(method, 'interpolation')
+            % bilinear interpolation
+            u_d = p_D_d(1)/p_D_d(3); 
+            v_d = p_D_d(2)/p_D_d(3);
+            x = u_d - floor(u_d); 
+            y = v_d - floor(v_d); 
+            u_d = floor(u_d);
+            v_d = floor(v_d);
+
+            % update through backward warping 
+            img_u(v,u) = (1-x) * (1-y) * img_d(v_d,u_d)   + ...
+                         (1-x) *   y   * img_d(v_d+1,u_d) + ...
+                           x   * (1-y) * img_d(v_d,u_d+1) + ...
+                           x   *   y   * img_d(v_d+1,u_d+1) ;   
+            
+        else
+            error('define method: ''neighbour'' or ''interpolation''');
+        end
                                 
     end
 end
