@@ -8,6 +8,8 @@ function generate_video()
 % Samuel Nyffenegger, 12.10.17
 
 %% calculations
+fprintf('Generating video... ')
+
 
 % param
 outputVideo = VideoWriter('data/AR_cube');
@@ -21,4 +23,5 @@ for i = 1:param.n_frames
 end
 close(outputVideo)
 
+fprintf('done! \n')
 end

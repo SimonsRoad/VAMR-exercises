@@ -36,13 +36,14 @@ for i = 1:param.n_frames
     [~, ~, z_vec] = helper_CubeLineCoordinates(Pp);
         
     % draw cube on image
-    % img_u = insertShape(img_u,'Line',[0 0 100 100],'LineWidth',3,'Color','red');
-    % img_u = insertShape(img_u,'Line',z_vec','LineWidth',4,'Color','red');
+    for j = 0:15
+        img_u = insertShape(img_u,'Line',z_vec(2*j+1:(2*j+1)+3)','LineWidth',4,'Color','red');
+    end
     
     % plot
-    figure(i); clf; hold on;
-        imshow(img_u,'InitialMagnification','fit');
-        % line(x_vec,y_vec,'LineWidth',3,'Color','r')
+    % figure(i); clf; hold on;
+    %     imshow(img_u,'InitialMagnification','fit');
+    %     % line(x_vec,y_vec,'LineWidth',3,'Color','r')
 
     % save image
     eval(['imwrite(img_u,''data/images_undistorted/img_',num2str(i,'%04.0f'),'.jpg'');']);
