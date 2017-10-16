@@ -8,7 +8,7 @@ classdef param
         cube_x = 2;         % x position [units] of top left corner
         cube_y = 2;         % y position [units] of top left corner
         cube_a = 2;         % length of cube [units]
-        n_frames = 736;       % number of video frames, -1 to inherit 
+        n_frames = 10; %736;       % number of video frames, -1 to inherit 
         
         % parameters
         spacing = 0.04;     % length of checkerboard square [m]

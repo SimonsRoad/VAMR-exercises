@@ -9,7 +9,8 @@ function init(folder)
     
 % change path and add subfolders
 eval(['cd ~/Documents/MATLAB/',folder])
-addpath(genpath('data'))
+addpath(genpath('data'));
+addpath(genpath('code'));
 
 % apply command from control center
 if param.dockFig
