@@ -12,7 +12,7 @@ fprintf('Generating video... ')
 
 
 % param
-outputVideo = VideoWriter('data/AR_cube');
+outputVideo = VideoWriter('AR_cube');
 outputVideo.FrameRate = 30;
 
 % make movie
