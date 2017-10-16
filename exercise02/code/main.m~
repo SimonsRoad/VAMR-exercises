@@ -23,5 +23,5 @@ figure(1); clf; hold on;
     imshow(data.img_0001,'InitialMagnification','fit');
 
 % convert pixel coordinates to 
-p = pixel2calibratedCoordinates(corners, data.K); 
+p = pixel2calibratedCoordinates(P, data.K)
 

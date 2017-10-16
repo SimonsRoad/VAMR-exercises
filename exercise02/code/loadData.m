@@ -12,5 +12,10 @@ data.K = load('data/K.txt');
 data.p_W = load('data/p_W_corners.txt');
 data.detected_corners = load('data/detected_corners.txt');
 
+% load first image
+data.img_0001 = rgb2gray(imread('data/images_undistorted/img_0001.jpg'));
+
+
+
 
 end
