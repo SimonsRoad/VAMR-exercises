@@ -42,7 +42,7 @@ R = M(1:3,1:3); t = M(:,4);
 R_tilde = U*V';
 
 % check if rotaton matrix is valid
-tol = 1e-15;
+tol = 1e-10;
 assert(norm( det(R_tilde)-1 ) < tol,'R_tilde is not a orthogonal rotation matrix');
 assert( max(max(R_tilde'-inv(R_tilde))) < tol, 'R_tilde is not a orthogonal rotation matrix');
 
