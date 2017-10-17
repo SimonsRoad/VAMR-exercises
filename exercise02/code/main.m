@@ -25,3 +25,7 @@ figure(1); clf; hold on;
 % convert pixel coordinates to 
 p = pixel2calibratedCoordinates(corners, data.K); 
 
+% estimate pose using the DLT algorithm
+M = estimatePoseDLT(p, P, data.K);
+
+
