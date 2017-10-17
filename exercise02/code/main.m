@@ -18,14 +18,19 @@ img = data.img_0001;
 corners = data.detected_corners(1,:);
 P = data.p_W; 
 
-% plot first image
-figure(1); clf; hold on;
-    imshow(data.img_0001,'InitialMagnification','fit');
-
 % convert pixel coordinates to 
 p = pixel2calibratedCoordinates(corners, data.K); 
 
 % estimate pose using the DLT algorithm
 M = estimatePoseDLT(p, P, data.K);
+
+% reproject checker points
+points = reprojectPoints(P, data.K, M);
+
+% plot first image
+figure(1); clf; hold on;
+    imshow(data.img_0001,'InitialMagnification','fit');
+    scatter(points(:,1),points(:,2),'*r');
+
 
 
