@@ -28,7 +28,6 @@ for i = 1:num
     keypoints(:,i) = [y; x];
     
     % non-maxima supression
-    x_min = max(1,x-r);
     scores(max(1,y-r):min(h,y+r),max(1,x-r):min(w,x+r)) = 0;
     
 end
