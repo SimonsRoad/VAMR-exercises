@@ -67,7 +67,7 @@ plotMatches(matches, keypoints_2, keypoints);
 
 %% Part 5 - Match descriptors between all images
 figure(5);
-img_indices = 0:20;%199;
+img_indices = 0:199;
 clear prev_desc
 for i = img_indices
     img = imread(sprintf('../data/%06d.png',i));
