@@ -1,5 +1,10 @@
-clear all;
-close all;
+%   Vision Algorithms for Mobile Robots
+%   Exercise 03
+%   Simple keypoint tracker
+%   Samuel Nyffenegger
+%   19.10.2017
+
+clear all; close all; clc;
 
 % Randomly chosen parameters that seem to work well - can you find better
 % ones?
@@ -16,13 +21,11 @@ img = imread('../data/000000.png');
 
 harris_scores = harris(img, harris_patch_size, harris_kappa);
 assert(min(size(harris_scores) == size(img)));
-figure(1);
-subplot(2, 1, 1);
-imshow(img);
-subplot(2, 1, 2);
-imagesc(harris_scores);
-axis equal;
-axis off;
+figure(1); clf; axis equal; axis off;
+    subplot(2, 1, 1);
+        imshow(img);
+    subplot(2, 1, 2);
+        imagesc(harris_scores);
 
 %% Part 2 - Select keypoints
 
@@ -32,8 +35,10 @@ figure(2);
 imshow(img);
 hold on;
 plot(keypoints(2, :), keypoints(1, :), 'rx', 'Linewidth', 2);
+plot(keypoints(2, 1:16), keypoints(1, 1:16), 'gx', 'Linewidth', 3);
 
 %% Part 3 - Describe keypoints and show 16 strongest keypoint descriptors
+clc
 
 descriptors = describeKeypoints(img, keypoints, descriptor_radius);
 figure(3);
