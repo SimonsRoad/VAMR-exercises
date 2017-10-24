@@ -34,7 +34,7 @@ keypoints = selectKeypoints(...
 figure(2);
 imshow(img);
 hold on;
-plot(keypoints(1, :), keypoints(2, :), 'rx', 'Linewidth', 2);
+plot(keypoints(2, :), keypoints(1, :), 'rx', 'Linewidth', 2);
 
 %% Part 3 - Describe keypoints and show 16 strongest keypoint descriptors
 
