@@ -37,6 +37,7 @@ hold on;
 plot(keypoints(2, :), keypoints(1, :), 'rx', 'Linewidth', 2);
 
 %% Part 3 - Describe keypoints and show 16 strongest keypoint descriptors
+clc
 
 descriptors = describeKeypoints(img, keypoints, descriptor_radius);
 figure(3);
