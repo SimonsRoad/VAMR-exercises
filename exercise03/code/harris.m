@@ -2,6 +2,15 @@ function scores = harris(img, patch_size, kappa)
 
 %% calculations
 
+% bridge
+try 
+    % launched inside harris
+    patch_size = harris_patch_size;
+    kappa = harris_kappa;
+catch
+    % launched in main
+end
+
 % calculate radius
 patch_radius = floor((patch_size-1)/2);
 
@@ -31,6 +40,10 @@ R = M(:,:,1).*M(:,:,4)-M(:,:,2).*M(:,:,3) - kappa*(M(:,:,1)+M(:,:,4)).^2;
 
 % add zeros at the border
 scores = padarray(R,(patch_radius+1)*[1,1,0],'both');
+
+% replace negative score with zeros
+idx = find(scores < 0);
+scores(idx) = 0;
 
 
 end
