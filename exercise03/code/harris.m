@@ -36,7 +36,9 @@ M(:,:,3) = sI_xy;
 M(:,:,4) = sI_y2; 
 
 % calculate harris score, R_uv = det(M_uv) − κ*trace(M_uv)^2
-R = M(:,:,1).*M(:,:,4)-M(:,:,2).*M(:,:,3) - kappa*(M(:,:,1)+M(:,:,4)).^2;
+M_ad = M(:,:,1).*M(:,:,4);
+M_bc = M(:,:,2).*M(:,:,3);
+R = M_ad - M_bc - kappa*(M_ad).^2;
 
 % add zeros at the border
 scores = padarray(R,(patch_radius+1)*[1,1,0],'both');
