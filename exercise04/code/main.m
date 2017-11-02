@@ -2,10 +2,11 @@ clear all;
 close all;
 
 % Scaling down by a factor of 2, otherwise too slow.
-left_img = imresize(imread('../data/left/000000.png'), 0.5);
-right_img = imresize(imread('../data/right/000000.png'), 0.5);
+scaling = 2;
+left_img = imresize(imread('../data/left/000000.png'), 1/scaling);
+right_img = imresize(imread('../data/right/000000.png'), 1/scaling);
 K = load('../data/K.txt');
-K(1:2, :) = K(1:2, :) / 2;
+K(1:2, :) = K(1:2, :) / scaling;
 
 poses = load('../data/poses.txt');
 
@@ -25,11 +26,11 @@ zlims = [-5 5];
 tic;
 disp_img = getDisparity(...
     left_img, right_img, patch_radius, min_disp, max_disp);
-toc
+time = toc
 figure(1);
-imagesc(disp_img);
-axis equal;
-axis off;
+    imagesc(disp_img);
+    axis equal;
+    axis off;
 
 %% Optional (only if fast enough): Disparity movie
 warning(['Visualizing disparity over sequence! This is optional and' ...
