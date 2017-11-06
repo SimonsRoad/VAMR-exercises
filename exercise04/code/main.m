@@ -52,8 +52,8 @@ end
 
 %% Part 3: Create point cloud for first pair
 
-[p_C_points, intensities] = disparityToPointCloud(...
-    disp_img, K, baseline, left_img);
+tic,[p_C_points, intensities] = disparityToPointCloud(...
+    disp_img, K, baseline, left_img); time=toc
 % From camera frame to world frame:
 p_F_points = [0 -1 0; 0 0 -1; 1 0 0]^-1 * p_C_points(:, 1:10:end);
 
