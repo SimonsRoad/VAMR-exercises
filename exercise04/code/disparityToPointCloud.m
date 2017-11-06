@@ -24,7 +24,7 @@ parfor h = 1:H
             p1 = [w-d; h];
             A = K^-1*[p0 -p1; 1 -1]; 
             lambda = A\b; % overdeterimed
-            P = lambda(1) * K^-1*[p0;1];
+            P = lambda(1) * K^-1*[p0; 1];
 
             % update
             points = [points, [P(1);P(2);P(3)]];

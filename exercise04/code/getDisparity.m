@@ -12,13 +12,15 @@ function disp_img = getDisparity(...
 plot_left_patch = 0;
 plot_right_patch = 0;
 plot_eucllidean_distance = 0;
+early_stopping = 0;
+sub_pixel_refinement = 1;
 
 % init
 [H, W] = size(left_img); 
 disp_img = zeros(H,W); 
 
-
-parfor (h_l = 1:H, 15)
+parfor h_l = 1:((1-early_stopping)*H + early_stopping*10)
+    warning('off','all')
     for w_l = 1:W
         if (w_l <= patch_radius+max_disp) || (w_l >= W-patch_radius) || ... 
            (h_l <= patch_radius)          || (h_l >= H-patch_radius)
@@ -51,24 +53,26 @@ parfor (h_l = 1:H, 15)
                         
             % get distance
             D = pdist2(single(query_descriptors'),single(database_descriptors'),'squaredeuclidean');
-            [min_D, idx_r] = min(D);
-            w_r = idx_r + patch_radius;
+            [min_D, idx_D] = min(D);
+            w_r = idx_D + patch_radius;
             disp_i = w_l - w_r; 
-                        
+            
             % filter 1: reject ambiguous matches
             scaling_ambiguous = 1.5;
             n_ambiguous = length(D(D < scaling_ambiguous*min_D)); 
             if n_ambiguous > 2
                 disp_i = 0;
+                continue;
             end
             
             % filter 2: reject bound estimates
             % disp_i = min(max(disp_i,min_disp),max_disp);
             if disp_i > max_disp || disp_i < min_disp
                 disp_i = 0;
-            end
-            
-            
+                continue;
+            end            
+
+            % plot correspondance of left/right patches
             if plot_eucllidean_distance
                 figure(3); clf;
                     plot(1:length(D),D','*-')
@@ -87,11 +91,22 @@ parfor (h_l = 1:H, 15)
                     axis equal
             end
             
+            % sub-pixel refinement
+            if sub_pixel_refinement
+                X = [idx_D-1, idx_D, idx_D+1];
+                Y = D(X);
+                p = polyfit(X,Y,2);
+                idx_D_refined = -p(2)/(2*p(1));
+                w_r = idx_D_refined + patch_radius;
+                disp_i = w_l - w_r; 
+            end
+
             % update
             disp_img(h_l,w_l) = disp_i;
         end
     end
 end
 
+warning on
 
 end
