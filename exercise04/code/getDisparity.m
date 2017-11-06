@@ -1,3 +1,8 @@
+% TODOs:
+%   - skip patches with disparity > max_disp
+%   - rectified: database patches only once for whole column
+%   - apply debug modus
+
 function disp_img = getDisparity(...
     left_img, right_img, patch_radius, min_disp, max_disp)
 % left_img and right_img are both H x W and you should return a H x W

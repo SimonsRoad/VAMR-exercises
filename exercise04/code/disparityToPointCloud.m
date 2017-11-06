@@ -1,3 +1,6 @@
+% TODOs:
+%   - can be implemented using only one for loop
+
 function [points, intensities] = disparityToPointCloud(...
     disp_img, K, baseline, left_img)
 % points should be 3xN and intensities 1xN, where N is the amount of pixels
