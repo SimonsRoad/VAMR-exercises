@@ -7,24 +7,30 @@ function disp_img = getDisparity(...
 % each valid d should satisfy min_disp <= d <= max_disp.
 
 %% calculations
+clc
 
 % control center
 plot_left_patch = 0;
 plot_right_patch = 0;
 plot_eucllidean_distance = 0;
+early_stopping = 1;
 
 % init
 [H, W] = size(left_img); 
 disp_img = zeros(H,W); 
 
+i = 0; I = 1000;
 
-parfor (h_l = 1:H, 15)
+for h_l = 1:H
     for w_l = 1:W
         if (w_l <= patch_radius+max_disp) || (w_l >= W-patch_radius) || ... 
            (h_l <= patch_radius)          || (h_l >= H-patch_radius)
             % disparity not defined, set to zero
             disp_img(h_l,w_l) = 0;
-        else            
+        else
+            % early stopping after I disparity calculations
+            if i >= I && early_stopping; break; else; i=i+1; end 
+            
             % get patch of left image
             query_descriptors = left_img(h_l-patch_radius:h_l+patch_radius, ...
                                        w_l-patch_radius:w_l+patch_radius);
@@ -52,12 +58,9 @@ parfor (h_l = 1:H, 15)
             % get distance
             D = pdist2(single(query_descriptors'),single(database_descriptors'),'squaredeuclidean');
             [~, idx_r] = min(D);
-            w_r = idx_r + patch_radius;
-            disp_i = w_l - w_r; 
-            
-            % ensure disparity is bounded
-            disp_i = min(max(disp_i,min_disp),max_disp);
-            
+            w_r = max_disp
+            % disp_i = idx_r - max_disp;  % TODO: why -1
+            disp_i = (w_r + max_disp) - w_l; 
             if plot_eucllidean_distance
                 figure(3); clf;
                     plot(1:length(D),D','*-')
@@ -76,11 +79,17 @@ parfor (h_l = 1:H, 15)
                     axis equal
             end
             
+            
             % update
             disp_img(h_l,w_l) = disp_i;
         end
     end
 end
+% squaredeuclidean
+
+% pdist2, convert input to single
+
+
 
 
 end
