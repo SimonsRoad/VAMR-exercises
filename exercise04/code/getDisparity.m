@@ -51,12 +51,23 @@ parfor (h_l = 1:H, 15)
                         
             % get distance
             D = pdist2(single(query_descriptors'),single(database_descriptors'),'squaredeuclidean');
-            [~, idx_r] = min(D);
+            [min_D, idx_r] = min(D);
             w_r = idx_r + patch_radius;
             disp_i = w_l - w_r; 
+                        
+            % filter 1: reject ambiguous matches
+            scaling_ambiguous = 1.5;
+            n_ambiguous = length(D(D < scaling_ambiguous*min_D)); 
+            if n_ambiguous > 2
+                disp_i = 0;
+            end
             
-            % ensure disparity is bounded
-            disp_i = min(max(disp_i,min_disp),max_disp);
+            % filter 2: reject bound estimates
+            % disp_i = min(max(disp_i,min_disp),max_disp);
+            if disp_i > max_disp || disp_i < min_disp
+                disp_i = 0;
+            end
+            
             
             if plot_eucllidean_distance
                 figure(3); clf;

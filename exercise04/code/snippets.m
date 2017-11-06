@@ -11,7 +11,7 @@ figure(2); clf
 %% parallel computing
 clc
 tic
-parfor (i=1:20, 15)
-    disp(i) 
+parfor (i=1:1000, 15)
+    A = rand(100,100); 
 end
 time = toc
