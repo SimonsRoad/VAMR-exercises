@@ -2,10 +2,11 @@ clear all;
 close all;
 
 % Scaling down by a factor of 2, otherwise too slow.
-left_img = imresize(imread('../data/left/000000.png'), 0.5);
-right_img = imresize(imread('../data/right/000000.png'), 0.5);
+scaling = 2;
+left_img = imresize(imread('../data/left/000000.png'), 1/scaling);
+right_img = imresize(imread('../data/right/000000.png'), 1/scaling);
 K = load('../data/K.txt');
-K(1:2, :) = K(1:2, :) / 2;
+K(1:2, :) = K(1:2, :) / scaling;
 
 poses = load('../data/poses.txt');
 
@@ -21,15 +22,16 @@ ylims = [-6 10];
 zlims = [-5 5];
 
 %% Parts 1, 2 and 4: Disparity on one image pair
-
+clc
 tic;
 disp_img = getDisparity(...
     left_img, right_img, patch_radius, min_disp, max_disp);
-toc
+time = toc
+
 figure(1);
-imagesc(disp_img);
-axis equal;
-axis off;
+    imagesc(disp_img);
+    axis equal;
+    axis off;
 
 %% Optional (only if fast enough): Disparity movie
 warning(['Visualizing disparity over sequence! This is optional and' ...
@@ -50,8 +52,8 @@ end
 
 %% Part 3: Create point cloud for first pair
 
-[p_C_points, intensities] = disparityToPointCloud(...
-    disp_img, K, baseline, left_img);
+tic,[p_C_points, intensities] = disparityToPointCloud(...
+    disp_img, K, baseline, left_img); time=toc
 % From camera frame to world frame:
 p_F_points = [0 -1 0; 0 0 -1; 1 0 0]^-1 * p_C_points(:, 1:10:end);
 
