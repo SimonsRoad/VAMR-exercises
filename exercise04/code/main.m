@@ -24,7 +24,7 @@ zlims = [-5 5];
 %% Parts 1, 2 and 4: Disparity on one image pair
 clc
 tic;
-disp_img = getDisparity_sol(...
+disp_img = getDisparity(...
     left_img, right_img, patch_radius, min_disp, max_disp);
 time = toc
 
@@ -41,7 +41,7 @@ maxi = 99;
 for i = 0:maxi
     l = imresize(imread(sprintf('../data/left/%06d.png',i)), 0.5);
     r = imresize(imread(sprintf('../data/right/%06d.png',i)), 0.5);
-    disp_img_i = getDisparity_sol(...
+    disp_img_i = getDisparity(...
         l, r, patch_radius, min_disp, max_disp);
     imagesc(disp_img_i);
     axis equal;
