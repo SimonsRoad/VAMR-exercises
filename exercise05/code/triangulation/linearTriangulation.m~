@@ -16,13 +16,9 @@ function P = linearTriangulation(p1,p2,M1,M2)
 N = size(p1,2);
 P = zeros(4,N);
 
-for i = 1:N
-    Q = [skew(p1(:,i))*M1; ...
-         skew(p2(:,i))*M2];
-    [~,~,V] = svd(Q);
-    Pi = V(:,end); 
-    Pi = Pi / Pi(end);
-    P(:,i) = Pi;
+for n = 1:N
+    Q(
+    
 end
 
 
