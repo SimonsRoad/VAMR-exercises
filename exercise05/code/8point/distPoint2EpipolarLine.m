@@ -17,3 +17,5 @@ epi_lines = [F.'*p2, F*p1];
 
 denom = epi_lines(1,:).^2 + epi_lines(2,:).^2;
 cost = sqrt( sum( (sum(epi_lines.*homog_points,1).^2)./denom ) / NumPoints );
+
+end

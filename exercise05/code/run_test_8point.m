@@ -1,10 +1,9 @@
-clear all % clear all variables in the workspace
-close all % close all figures
-clc       % clear the command window
+clear all; close all; clc       
 
 addpath('8point/');
 addpath('triangulation/');
 addpath('plot/');
+addpath('utilities/');
 
 rng(42);
 
@@ -31,6 +30,7 @@ noisy_x1 = x1 + sigma * randn(size(x1));
 noisy_x2 = x2 + sigma * randn(size(x1));
 
 %% Fundamental matrix estimation via the 8-point algorithm
+clc
 
 % Estimate fundamental matrix
 % Call the 8-point algorithm on inputs x1,x2
@@ -44,7 +44,17 @@ fprintf('Noise-free correspondences\n');
 fprintf('Algebraic error: %f\n', cost_algebraic);
 fprintf('Geometric error: %f px\n\n', cost_dist_epi_line);
 
+% print binary success status
+tol = 1e-9;
+fprintf('SN:Info: ')
+if norm(F)~=0 && cost_algebraic < tol && cost_dist_epi_line < tol
+    cprintf([0,0.5,0],'Noise-free fundamental matrix calculation was successful\n')
+else
+    cprintf([0.9,0,0],'Noise-free fundamental matrix calculation calculation failed\n')
+end
+
 %% Test with noise:
+clc
 
 % Estimate fundamental matrix
 % Call the 8-point algorithm on noisy inputs x1,x2
@@ -58,8 +68,18 @@ fprintf('Noisy correspondences (sigma=%f), with fundamentalEightPoint\n', sigma)
 fprintf('Algebraic error: %f\n', cost_algebraic);
 fprintf('Geometric error: %f px\n\n', cost_dist_epi_line);
 
+% print binary success status
+tol = 1e-10;
+fprintf('SN:Info: ')
+if norm(F)~=0 && cost_algebraic < tol && cost_dist_epi_line < tol
+    cprintf([0,0.5,0],'Noisy fundamental matrix calculation was successful\n')
+else
+    cprintf([0.9,0,0],'Noisy fundamental matrix calculation calculation failed\n')
+end
 
 %% Normalized 8-point algorithm
+clc
+
 % Call the normalized 8-point algorithm on inputs x1,x2
 Fn = fundamentalEightPoint_normalized(noisy_x1,noisy_x2);
 
@@ -71,3 +91,11 @@ cost_dist_epi_line = distPoint2EpipolarLine(Fn,noisy_x1,noisy_x2);
 fprintf('Noisy correspondences (sigma=%f), with fundamentalEightPoint_normalized\n', sigma);
 fprintf('Algebraic error: %f\n', cost_algebraic);
 fprintf('Geometric error: %f px\n\n', cost_dist_epi_line);
+
+% print binary success status
+fprintf('SN:Info: ')
+if norm(F)~=0 && cost_algebraic < 0.01 && cost_dist_epi_line < 100
+    cprintf([0,0.5,0],'Normalized 8-point algorithm for fundamental matrix calculation was successful\n')
+else
+    cprintf([0.9,0,0],'Normalized 8-point algorithm for fundamental matrix calculation calculation failed\n')
+end

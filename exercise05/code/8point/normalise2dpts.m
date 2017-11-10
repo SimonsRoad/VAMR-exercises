@@ -13,4 +13,28 @@ function [newpts, T] = normalise2dpts(pts)
 % Returns:
 %   newpts -  3xN array of transformed 2D homogeneous coordinates.
 %   T      -  The 3x3 transformation matrix, newpts = T*pts
-%
+
+%% calculations
+
+% bridge
+try
+    % launched inside normalise2dpts
+    pts = noisy_x1;
+catch
+   % launched from main 
+end
+
+N = size(pts,2);
+% pts = pts ./pts(3,:); % why is this wrong? pts(3,:) are not 1
+
+mu = mean(pts(1:2,:),2);
+sigma = mean( sqrt(sum((pts(1:2,:)-repmat(mu,1,N)).^2)) ); 
+s = sqrt(2) / sigma;
+
+T = [s 0 -s*mu(1); ...
+     0 s -s*mu(2); ...
+     0 0 1]; 
+ 
+newpts = T*pts; 
+
+end

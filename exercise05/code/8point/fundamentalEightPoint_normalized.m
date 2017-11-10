@@ -8,4 +8,21 @@ function F = fundamentalEightPoint_normalized(p1, p2)
 %
 % Output:
 %  - F(3,3) : fundamental matrix
-%
+
+%% calculations
+
+% bridge
+try
+    % launched inside fundamentalEightPoint_normalized
+    p1 = noisy_x1;
+    p2 = noisy_x2;
+catch
+    % launched from main
+end
+
+[p1_tilde, T1] = normalise2dpts(p1); 
+[p2_tilde, T2] = normalise2dpts(p2); 
+F_tilde = fundamentalEightPoint(p1_tilde,p2_tilde); 
+F = T2'*F_tilde*T1;
+
+end

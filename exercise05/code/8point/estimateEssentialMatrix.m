@@ -10,4 +10,9 @@ function E = estimateEssentialMatrix(p1, p2, K1, K2)
 %
 % Output:
 %  - E(3,3) : fundamental matrix
-%
+
+%% calculations
+
+E = zeros(3,3);
+
+end

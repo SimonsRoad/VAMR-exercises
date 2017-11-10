@@ -5,6 +5,7 @@ clc;
 addpath('8point/');
 addpath('triangulation/');
 addpath('plot/');
+addpath('utilities/');
 
 img = imread('../data/0001.jpg');
 img_2 = imread('../data/0002.jpg');

@@ -13,3 +13,37 @@ function F = fundamentalEightPoint(p1,p2)
 %
 % Output:
 %  - F(3,3) : fundamental matrix
+
+%% calculaitons
+
+% bridge
+try
+    % lauched inside fundamentalEightPoint
+    p1 = x1; 
+    p2 = x2;
+catch
+    % launched from main   
+end
+
+p1_ = p1';
+p2_ = p2';
+Q = [p1_(:,1).*p2_(:,1) , ...
+     p1_(:,2).*p2_(:,1) , ...
+     p1_(:,3).*p2_(:,1) , ...
+     p1_(:,1).*p2_(:,2) , ...
+     p1_(:,2).*p2_(:,2) , ...
+     p1_(:,3).*p2_(:,2) , ...
+     p1_(:,1).*p2_(:,3) , ...
+     p1_(:,2).*p2_(:,3) , ...
+     p1_(:,3).*p2_(:,3) ] ;
+
+[~,~,V] = svd(Q);
+F_vec = V(:,end);
+F = reshape(F_vec,3,3)';
+ 
+% enforcing det(F)=2
+[U,S,V] = svd(F);
+S(end,end) = 0; 
+F = U*S*V';
+
+end
