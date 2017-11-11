@@ -13,6 +13,29 @@ function E = estimateEssentialMatrix(p1, p2, K1, K2)
 
 %% calculations
 
-E = zeros(3,3);
+% bridge
+try
+    % launched inside estimateEssentialMatrix
+    K1 = K;
+    K2 = K;
+catch
+    % launched from main
+end
+
+p1_tilde = (K1^-1*p1)';
+p2_tilde = (K2^-1*p2)';
+Q = [p1_tilde(:,1).*p2_tilde(:,1) , ...
+     p1_tilde(:,2).*p2_tilde(:,1) , ...
+     p1_tilde(:,3).*p2_tilde(:,1) , ...
+     p1_tilde(:,1).*p2_tilde(:,2) , ...
+     p1_tilde(:,2).*p2_tilde(:,2) , ...
+     p1_tilde(:,3).*p2_tilde(:,2) , ...
+     p1_tilde(:,1).*p2_tilde(:,3) , ...
+     p1_tilde(:,2).*p2_tilde(:,3) , ...
+     p1_tilde(:,3).*p2_tilde(:,3) ] ;
+
+[~,~,V] = svd(Q);
+E_vec = V(:,end);
+E = reshape(E_vec,3,3)';
 
 end

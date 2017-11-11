@@ -14,7 +14,7 @@ K = [1379.74 0 760.35
     0 1382.08 503.41
     0 0 1 ];
 
-%% Load outlier-free point correspondences
+% Load outlier-free point correspondences
 
 p1 = load('../data/matches0001.txt');
 p2 = load('../data/matches0002.txt');
@@ -22,7 +22,7 @@ p2 = load('../data/matches0002.txt');
 p1 = [p1;ones(1,length(p1))];
 p2 = [p2;ones(1,length(p2))];
 
-%% Estimate the essential matrix E using the 8-point algorithm
+% Estimate the essential matrix E using the 8-point algorithm
 
 E = estimateEssentialMatrix(p1, p2, K, K);
 

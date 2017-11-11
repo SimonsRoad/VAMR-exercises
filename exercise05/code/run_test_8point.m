@@ -29,6 +29,31 @@ sigma = 1e-1;
 noisy_x1 = x1 + sigma * randn(size(x1));
 noisy_x2 = x2 + sigma * randn(size(x1));
 
+
+%% Essential matrix estimation via the 8-point algorithm
+clc
+
+% Estimate essential matrix
+% Call the 8-point algorithm on inputs x1,x2
+E = estimateEssentialMatrix(x1, x2, P1(1:3,1:3), P2(1:3,1:3));
+
+% Check the epipolar constraint x2(i).' * F * x1(i) = 0 for all points i.
+cost_algebraic = norm( sum(x2.*(E*x1)) ) / sqrt(N);
+cost_dist_epi_line = distPoint2EpipolarLine(E,x1,x2);
+
+fprintf('Noise-free correspondences\n');
+fprintf('Algebraic error: %f\n', cost_algebraic);
+fprintf('Geometric error: %f px\n\n', cost_dist_epi_line);
+
+% print binary success status
+tol = 1e-8;
+fprintf('SN:Info: ')
+if norm(E)~=0 && cost_algebraic < tol && cost_dist_epi_line < tol
+    cprintf([0,0.5,0],'Noise-free essential matrix calculation was successful\n')
+else
+    cprintf([0.9,0,0],'Noise-free essential matrix calculation calculation failed\n')
+end
+
 %% Fundamental matrix estimation via the 8-point algorithm
 clc
 
