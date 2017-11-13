@@ -40,7 +40,7 @@ M2 = K * [R_C2_W, T_C2_W];
 P = linearTriangulation(p1,p2,M1,M2);
 
 %% Visualize the 3-D scene
-figure(1),
+figure(1); clf
 subplot(1,3,1)
 
 % R,T should encode the pose of camera 2, such that M1 = [I|0] and M2=[R|t]
@@ -61,6 +61,9 @@ text(center_cam2_W(1)-0.1, center_cam2_W(2)-0.1, center_cam2_W(3)-0.1,'Cam 2','f
 axis equal
 rotate3d on;
 grid
+view(0,0);
+xlabel('x'); ylabel('y'); zlabel('z')
+xlim([-2.5, 2.5]); ylim([-0.5, 6])
 
 % Display matched points
 subplot(1,3,2)
