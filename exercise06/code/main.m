@@ -29,11 +29,7 @@ p_W_landmarks = load('../data/p_W_landmarks.txt')';
 database_image = imread('../data/000000.png');
 
 % Dependencies
-addpath('plot');
-% Replace the following with the path to your DLT code:
-addpath('../../exercise02/code');
-% Replace the following with the path to your keypoint matcher code:
-addpath('../../exercise03/code');
+addpath(genpath(cd));
 
 %% Part 1 - RANSAC with parabola model
 clc
@@ -66,13 +62,17 @@ subplot(1, 2, 2);
 plot(max_num_inliers_history);
 title('Max num inliers over iterations');
 
-disp('RMS of full fit =');
 x = (0:0.01:1) + xstart;
-disp(rms(polyval(poly, x) - polyval(full_fit, x)));
-disp('RMS of RANSAC =');
-x = (0:0.01:1) + xstart;
-disp(rms(polyval(poly, x) - polyval(best_guess_history(:, end), x)));
+RMS_full_fit = rms(polyval(poly, x) - polyval(full_fit, x));
+RMS_ransac = rms(polyval(poly, x) - polyval(best_guess_history(:, end), x));
 
+if RMS_ransac < RMS_full_fit
+    fprintf(['RMS_ransac = ',num2str(RMS_ransac),' < RMS_ful_fit = ',num2str(RMS_full_fit),'\n'])
+    fprintf('SN:Info: '); cprintf([0,0.5,0],'RANSAC estimation was successful \n')
+else
+    fprintf(['RMS_ransac = ',num2str(RMS_ransac),' > RMS_ful_fit = ',num2str(RMS_full_fit),'\n'])
+    fprintf('SN:Info: '); cprintf([0.9,0,0],'RANSAC estimation failed \n')
+end
 
 %% Parts 2 and 3 - Localization with RANSAC + DLT/P3P
 query_image = imread('../data/000001.png');
