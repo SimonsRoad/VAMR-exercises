@@ -1,5 +1,5 @@
-clear all;
-close all;
+clear all; close all; clc; 
+
 rng(1);
 
 % Create data for parts 1 and 2
@@ -31,11 +31,12 @@ database_image = imread('../data/000000.png');
 % Dependencies
 addpath('plot');
 % Replace the following with the path to your DLT code:
-addpath('../../02_pnp/code');
+addpath('../../exercise02/code');
 % Replace the following with the path to your keypoint matcher code:
-addpath('../../03_detect_describe_match/code');
+addpath('../../exercise03/code');
 
 %% Part 1 - RANSAC with parabola model
+clc
 [best_guess_history, max_num_inliers_history] = ...
     parabolaRansac(data, max_noise);
 
