@@ -1,10 +1,11 @@
 function scores = harris(img, patch_size, kappa)
-
+%% 
 sobel_para = [-1 0 1];
 sobel_orth = [1 2 1];
 
 Ix = conv2(sobel_orth', sobel_para, img, 'valid');
 Iy = conv2(sobel_para', sobel_orth, img, 'valid');
+
 Ixx = double(Ix .^ 2);
 Iyy = double(Iy .^ 2);
 Ixy = double(Ix .* Iy);
