@@ -24,10 +24,9 @@ I_y = conv2(img,sobel_y,'valid');
 I_x2 = I_x.^2;
 I_y2 = I_y.^2;
 I_xy = I_x.*I_y;
-patch = ones(patch_size)./(patch_size^2);
-sI_x2 = conv2(I_x2,patch,'valid');
-sI_y2 = conv2(I_y2,patch,'valid');
-sI_xy = conv2(I_xy,patch,'valid');
+sI_x2 = conv2(I_x2,ones(patch_size),'valid');
+sI_y2 = conv2(I_y2,ones(patch_size),'valid');
+sI_xy = conv2(I_xy,ones(patch_size),'valid');
 
 % calculate M, M_uv = reshape(M(u,v,:),2,2)
 M = zeros([size(sI_x2),4]);
@@ -43,7 +42,8 @@ R = M(:,:,1).*M(:,:,4) - M(:,:,2).*M(:,:,3) - kappa*(M(:,:,1)+M(:,:,4)).^2;
 scores = padarray(R,(patch_radius+1)*[1,1,0],'both');
 
 % replace negative score with zeros
-scores(scores < 0) = 0;
+idx = find(scores < 0);
+scores(idx) = 0;
 
 
 end
