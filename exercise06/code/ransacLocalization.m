@@ -42,8 +42,6 @@ figure(1); clf;
     plot(keypoints(2, 1:num_keypoints), keypoints(1, 1:num_keypoints), 'rx', 'Linewidth', 2);
     title('query image');
 
-figure(2); clf;
-    imshow(harris_scores)
 
 %% tmp
 n_matched = 100;
