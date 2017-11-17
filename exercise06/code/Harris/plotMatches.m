@@ -1,4 +1,12 @@
-function plotMatches(matches, query_keypoints, database_keypoints)
+function plotMatches(matches, query_keypoints, database_keypoints, query_image, figure_number)
+
+if exist('figure_number','var') && exist('query_image','var')
+    figure(figure_number); clf;
+        imshow(query_image);
+        hold on;
+        plot(query_keypoints(2,:), query_keypoints(1,:), 'rx', 'Linewidth', 2);
+        title('query image');
+end
 
 [~, query_indices, match_indices] = find(matches);
 

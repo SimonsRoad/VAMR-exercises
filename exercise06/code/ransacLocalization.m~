@@ -9,6 +9,11 @@ function [R_C_W, t_C_W, query_keypoints, all_matches, best_inlier_mask, ...
 
 %% calculations
 
+% control centre
+plotMatches = true;
+
+
+
 % bridge
 try 
     % launched inside ransacLocalization
@@ -36,9 +41,9 @@ database_harris = harris(database_image, harris_patch_size, harris_kappa);
 database_keypoints = selectKeypoints(database_harris, num_keypoints, nonmaximum_supression_radius);
 database_descriptors = describeKeypoints(database_image, database_keypoints, descriptor_radius); 
 
-% match query and database keypoints and plot it
+% match query and database keypoints
 matches = matchDescriptors(query_descriptors, database_descriptors, match_lambda);
-plotMatches(matches, query_keypoints, database_keypoints, query_image, 1); 
+plotMatches(matches, query_keypoints, database_keypoints);
 
 %%
 figure(1); clf; 
