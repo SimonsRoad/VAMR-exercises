@@ -17,7 +17,7 @@ catch
     % launched from main
 end
 
-%% find keypoints in the query image
+%% keypoint matching
 clc
 harris_patch_size = 9;
 harris_kappa = 0.08;
@@ -37,15 +37,32 @@ database_keypoints = selectKeypoints(database_harris, num_keypoints, nonmaximum_
 database_descriptors = describeKeypoints(database_image, database_keypoints, descriptor_radius); 
 
 % match query and database keypoints and plot it
-matches = matchDescriptors(query_descriptors, database_descriptors, match_lambda);
-plotMatches(matches, query_keypoints, database_keypoints, query_image, 1); 
+matches = [1:length(query_descriptors); zeros(1,length(query_descriptors))];
+matches(2,:) = matchDescriptors(query_descriptors, database_descriptors, match_lambda);
+[~, found_matches_index] = find(matches(2,:) > 0);
+found_matches = matches(:,found_matches_index);
+plotMatches(matches(2,:), query_keypoints, database_keypoints, query_image, 1, found_matches_index(1:8)); 
 
-%%
-figure(1); clf; 
-    imshow(query_image);
-    hold on;
-    plot(query_keypoints(2, 1:num_keypoints), query_keypoints(1, 1:num_keypoints), 'rx', 'Linewidth', 2);
-    title('query image');
+%% RANSAC with DLT and 8-point algorithm
+clc
+n_iterations = 1; %2000; 
+s = 8; 
+[H, W] = size(query_image);
+
+for i = 1:n_iterations
+    % randomly sample to get 8 matches
+    % chosen_matches = datasample(found_matches,s,2,'Replace',false); 
+    chosen_matches = found_matches(:,1:s); % tmp
+    
+    % convert indeces to homogeneous coordinates
+    query_homog_coord = K\[query_keypoints(:,chosen_matches(1,:));ones(1,s)];      % [y1..y8;x1..x8]
+    database_homog_coord = K\[database_keypoints(:,chosen_matches(2,:));ones(1,s)]; 
+    
+    % calculate essential matrix and R,t
+    E = estimateEssentialMatrix(database_homog_coord,query_homog_coord, K, K)
+    [Rots,u3] = decomposeEssentialMatrix(E);
+    [R,T] = disambiguateRelativePose(Rots,u3,database_homog_coord,query_homog_coord,K,K)
+end
 
 
 %% tmp
