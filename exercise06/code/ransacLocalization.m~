@@ -55,8 +55,8 @@ s = 8;
 
 for i = 1:n_iterations
     % randomly sample to get 8 matches
-    chosen_matches = datasample(found_matches,s,2,'Replace',false); 
-    % chosen_matches = found_matches(:,j:j+7); % tmp
+    % chosen_matches = datasample(found_matches,s,2,'Replace',false); 
+    chosen_matches = found_matches(:,j:j+7); % tmp
     
     % convert 
     query_homog_coord = K\[query_keypoints(:,chosen_matches(1,:));ones(1,s)];      % [y1..y8;x1..x8;1..1]
@@ -73,11 +73,7 @@ for i = 1:n_iterations
     reproj_pixel_coord = projectPoints(p_W_landmarks', K, M)'; 
 
     % get number of inliers
-    max_dist_pixels = 10;
-    diff = abs((reproj_pixel_coord-database_keypoints)); 
-    dist = sqrt(diff(1,:).^2+diff(2,:).^2);
-    n_inliers =  numel(dist(dist < max_dist_pixels));
-    disp(['i = ',num2str(i),': n_inliers = ',num2str(n_inliers)]);
+    n_inliers = sum( abs(y-data(2,:)) < max_noise ); 
 
     
 end
