@@ -1,22 +1,32 @@
-function M = estimatePoseDLT(p, P, K)
-% M = estimatePoseDLT(p, P, K);
-% estimates the pose (hence [R|t]) of the camera with given K
+function M = estimatePoseDLT(p, P)
+% M = estimatePoseDLT(p, P);
+% estimates the pose (hence [R|t]) of the camera
 % Input:
-%   p       calibrated (normalized) coordinates, p = [xi; yi; 1]
-%   P       corner coordinates in world frame, P = [x1, y1, z1 ; ... ; xn, yn, zn] 
-%   K       Camera matrix
+%   p       3xn normalized homogeneous 2d coordinates
+%   P       3xn world coordinate frame 
 % Output:
 %   M       homog. transformation, "camera pose", M = [R|t] 
-% Samuel Nyffenegger, 16.10.17
+% Samuel Nyffenegger, 20.11.17
 
 %% calculations
 
-% get Q Matrix, Q*M_row=0
-Q = zeros(2*param.n_reference_points,12); 
+% bridge
+try
+    % launched inside
+    p = query_homog_coord;
+    P = points_3d;
+catch
+    % launched outside
+end
 
-for i = 1:param.n_reference_points
+
+% get Q Matrix, Q*M_row=0
+n_points = size(p,2);
+Q = zeros(2*n_points,12); 
+
+for i = 1:n_points
     % get ith point coordinates
-    Pi = [P(i,:)';1];
+    Pi = [P(:,i);1];
     pi = p(2*i-1:2*i)';
     
     % fill in Q
@@ -28,8 +38,7 @@ for i = 1:param.n_reference_points
 end
 
 % solve over-determined system, min ||Q*M|| st. ||M||=1
-% M is eig-vec of smallest eig-val of Q'*Q
-[U,S,V] = svd(Q'*Q);
+[~,~,V] = svd(Q);
 M_vec = V(:,end);
 
 % reshape M and ensureing proper rotation matrix
@@ -38,7 +47,7 @@ M = M*sign(M(3,4));
 
 % sovle Orthogonal Procrustes problem, get proper rotation matrix
 R = M(1:3,1:3); t = M(:,4);
-[U,S,V] = svd(R);
+[U,~,V] = svd(R);
 R_tilde = U*V';
 
 % check if rotaton matrix is valid
