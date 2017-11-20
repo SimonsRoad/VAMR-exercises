@@ -9,12 +9,12 @@ A = 1:10;
 idx = find(A<7);
 B = A(idx); 
 
-
 %% dist
 clc
 a = [1 1 0;0 0 0];
 b = [0 0 3;1 0 0]; 
-diff = abs((a-b)); 
+diff = (a-b); 
 dist = sqrt(diff(1,:).^2+diff(2,:).^2)
+
 
 
