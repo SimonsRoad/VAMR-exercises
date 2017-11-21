@@ -20,7 +20,7 @@ catch
 end
 
 %% keypoint matching
-
+clc
 harris_patch_size = 9;
 harris_kappa = 0.08;
 num_keypoints = 1000;
@@ -80,17 +80,36 @@ for i = 1:num_iterations
         keypoint_sample', landmark_sample', K);
     R_C_W_guess = M_C_W_guess(:, 1:3);
     t_C_W_guess = M_C_W_guess(:, end);
+
     
     % Count inliers:
     projected_points = projectPoints(...
-        (R_C_W_guess(:,:,1) * corresponding_landmarks) + ... %this was my fault
+        (R_C_W_guess(:,:,1) * corresponding_landmarks) + ...
         repmat(t_C_W_guess(:,:,1), ...
         [1 size(corresponding_landmarks, 2)]), K);
     difference = matched_query_keypoints - projected_points;
     errors = sum(difference.^2, 1);
     is_inlier = errors < pixel_tolerance^2;
     
-    min_inlier_count = 6;
+    % If we use p3p, also consider inliers for the alternative solution.
+    if use_p3p
+        projected_points = projectPoints(...
+            (R_C_W_guess(:,:,2) * corresponding_landmarks) + ...
+            repmat(t_C_W_guess(:,:,2), ...
+            [1 size(corresponding_landmarks, 2)]), K);
+        difference = matched_query_keypoints - projected_points;
+        errors = sum(difference.^2, 1);
+        alternative_is_inlier = errors < pixel_tolerance^2;
+        if nnz(alternative_is_inlier) > nnz(is_inlier)
+            is_inlier = alternative_is_inlier;
+        end
+    end
+    
+    if tweaked_for_more
+        min_inlier_count = 30;
+    else
+        min_inlier_count = 6;
+    end
     
     if nnz(is_inlier) > max_num_inliers && ...
             nnz(is_inlier) >= min_inlier_count
@@ -112,5 +131,50 @@ else
     t_C_W = M_C_W(:, end);
 end
 
+
+%% myRANSAC with DLT 
+% clc
+% n_iterations = 1; %2000; 
+% s = 5; 
+% [H, W] = size(query_image);
+% 
+% for i = 1:n_iterations
+%     % randomly sample to get 8 matches
+%     chosen_matches = datasample(found_matches,s,2,'Replace',false); 
+%     % chosen_matches = found_matches(:,j:j+7); % tmp
+%     
+%     % convert 
+%     query_homog_coord = K\[query_keypoints(:,chosen_matches(1,:));ones(1,s)];      % [y1..y8;x1..x8;1..1]
+%     
+% %     % 2 view structure from motion: calculate essential matrix and corresponding R,t
+% %     E = estimateEssentialMatrix(database_homog_coord,query_homog_coord, K, K); 
+% %     [Rots,u3] = decomposeEssentialMatrix(E);
+% %     [R, T] = disambiguateRelativePose(Rots,u3,database_homog_coord,query_homog_coord,K,K);
+%     
+%     % project world points to image frame
+%     points_3d = p_W_landmarks(:,chosen_matches(2,:));
+%     M = estimatePoseDLT(query_homog_coord, points_3d); 
+%     R = M(1:3,1:3); t = M(1:3,4);
+%     reproj_pixel_coord = projectPoints(p_W_landmarks', K, M)'; 
+% 
+%     % get number of inliers
+%     max_dist_pixels = 10;
+%     diff = abs((reproj_pixel_coord-database_keypoints)); 
+%     dist = sqrt(diff(1,:).^2+diff(2,:).^2);
+%     n_inliers =  numel(dist(dist < max_dist_pixels));
+%     disp(['i = ',num2str(i),': n_inliers = ',num2str(n_inliers)]);
+% 
+%     
+% end
+
+
+%% tmp
+n_matched = 100;
+R_C_W = eye(3); 
+t_C_W = zeros(3,1);
+query_keypoints = zeros(2,1000);
+all_matches = zeros(1,1000);
+best_inlier_mask = ones(1,n_matched);
+max_num_inliers_history = ones(1,2000); 
 
 end

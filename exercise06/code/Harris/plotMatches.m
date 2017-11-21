@@ -1,6 +1,5 @@
 function plotMatches(matches, query_keypoints, database_keypoints, query_image, figure_number, bold_index)
 %% calculations
-clc
 if exist('figure_number','var') && exist('query_image','var')
     figure(figure_number); clf;
         imshow(query_image);
