@@ -1,13 +1,14 @@
 function  points = projectPoints(Pw, K, RT, D)
+% points = projectPoints(Pw, K, RT);
 % points = projectPoints(Pw, K, RT, D);
-% projects points in world coordinate Pw frame to image (u,v)
+% projects points in world coordinate Pw frame to pixel coordinates on image (u,v)
 % Input:
-%   Pw      Points in world frame Pw = [x1,y1,z1; x2,y2,z2; ...]
-%   K       Camera matrix
-%   RT      transformation
-%   D       distortion model, two parameters
+%   Pw      Nx3 Points in world frame Pw = [x1,y1,z1; x2,y2,z2; ...]
+%   K       3x3 Camera matrix
+%   RT      3x4 transformation
+%   D       2x1 distortion model, two parameters
 % Output:
-%   points  discretized pixel coordinates, points = [u1, v1; u2, v2; ...]
+%   points  Nx2 discretized pixel coordinates, points = [u1, v1; u2, v2; ...]
 % Samuel Nyffenegger, 09.10.17
     
 %%  calculations
