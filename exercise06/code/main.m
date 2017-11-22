@@ -82,6 +82,7 @@ query_image = imread('../data/000001.png');
     ransacLocalization(query_image, database_image,  keypoints, ...
     p_W_landmarks, K);
 
+%%
 disp('Found transformation T_C_W = ');
 disp([R_C_W t_C_W; zeros(1, 3) 1]);
 disp('Estimated inlier ratio is');

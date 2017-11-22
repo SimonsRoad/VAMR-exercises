@@ -16,5 +16,13 @@ b = [0 0 3;1 0 0];
 diff = (a-b); 
 dist = sqrt(diff(1,:).^2+diff(2,:).^2)
 
+%% matrix mult
+clc
+
+P = [[1;0;0],[1;1;1]]; 
+R = rotz(90)
+t = ones(3,1); 
+PP = R*P + t
+
 
 

@@ -1,4 +1,4 @@
-function [R_C_W, t_C_W, query_keypoints, all_matches, best_inlier_mask, ...
+function [R_C_W, t_C_W_guess, query_keypoints, all_matches, best_inlier_mask, ...
     max_num_inliers_history] = ransacLocalization(...
     query_image, database_image, database_keypoints, p_W_landmarks, K)
 % query_keypoints should be 2x1000
@@ -20,7 +20,7 @@ catch
 end
 
 %% keypoint matching
-clc
+
 harris_patch_size = 9;
 harris_kappa = 0.08;
 num_keypoints = 1000;
@@ -39,88 +39,64 @@ query_descriptors = describeKeypoints(query_image, query_keypoints, descriptor_r
 database_descriptors = describeKeypoints(database_image, database_keypoints, descriptor_radius); 
 
 % match query and database keypoints and plot it
-% matches = [index query for all points; index database for all points]
-matches = [1:length(query_descriptors); zeros(1,length(query_descriptors))];
-matches(2,:) = matchDescriptors(query_descriptors, database_descriptors, match_lambda);
-[~, found_matches_index] = find(matches(2,:) > 0);
-found_matches = matches(:,found_matches_index);
-j = 28;
-plotMatches(matches(2,:), query_keypoints, database_keypoints, query_image, 1, found_matches(1,j:j+7)); 
-
-% solution
 all_matches = matchDescriptors(query_descriptors, database_descriptors, match_lambda);
-% Drop unmatched keypoints and get 3d landmarks for the matched ones.
-matched_query_keypoints = query_keypoints(:, all_matches > 0);
 corresponding_matches = all_matches(all_matches > 0);
-corresponding_landmarks = p_W_landmarks(:, corresponding_matches);
+matched_query_keypoints = query_keypoints(:,all_matches > 0);
+matched_database_keypoints = database_keypoints(:,corresponding_matches);
+corresponding_landmarks = p_W_landmarks(:,corresponding_matches); 
 
 %% RANSAC
-% Initialize RANSAC.
-num_iterations = 2000;
+% params RANSAC.
+n_iterations = 2000;
 pixel_tolerance = 10;
 k = 6;
 
-best_inlier_mask = zeros(1, size(matched_query_keypoints, 2));
-% (row, col) to (u, v)
-matched_query_keypoints = flipud(matched_query_keypoints);
-max_num_inliers_history = zeros(1, num_iterations);
-max_num_inliers = 0;
-% Replace the following with the path to your camera projection code:
-addpath('../../Solution 1/code');
-addpath('../../Solution 2/code');
+% init
+n_matches = size(corresponding_matches,2);
+best_n_inliers = 0; 
+best_inlier_mask = zeros(1,n_matches);
+max_num_inliers_history = zeros(1,n_iterations);
+matched_query_keypoints = flipud(matched_query_keypoints); % (row, col) to (u, v)
 
-% RANSAC
-for i = 1:num_iterations
-    % Model from k samples (DLT or P3P)
-    [landmark_sample, idx] = datasample(...
-        corresponding_landmarks, k, 2, 'Replace', false);
-    keypoint_sample = matched_query_keypoints(:, idx);
+for i = 1:n_iterations
+    % get k random samples and corresponding landmarks
+    [sample_keypoints, idx] = datasample(matched_query_keypoints,k,2,'Replace',false);
+    sample_landmarks = corresponding_landmarks(:,idx);
     
-    M_C_W_guess = estimatePoseDLT(...
-        keypoint_sample', landmark_sample', K);
-    R_C_W_guess = M_C_W_guess(:, 1:3);
-    t_C_W_guess = M_C_W_guess(:, end);
-
+    % guess R,t
+    M_C_W_guess = estimatePoseDLT(sample_keypoints', sample_landmarks', K); 
+    R_C_W_guess = M_C_W_guess(1:3,1:3);
+    t_C_W_guess = M_C_W_guess(1:3,4);
     
-    % Count inliers:
-    projected_points = projectPoints(...
+    % reproject
+    % corresponding_landmarks_C = R_C_W_guess*corresponding_landmarks + t_C_W_guess; 
+    % reprojected_points = projectPoints(corresponding_landmarks_C, K); 
+    reprojected_points = projectPoints(...
         (R_C_W_guess(:,:,1) * corresponding_landmarks) + ...
         repmat(t_C_W_guess(:,:,1), ...
         [1 size(corresponding_landmarks, 2)]), K);
+
+    % error analysis
     difference = matched_query_keypoints - projected_points;
     errors = sum(difference.^2, 1);
     is_inlier = errors < pixel_tolerance^2;
     
-    % If we use p3p, also consider inliers for the alternative solution.
-    if use_p3p
-        projected_points = projectPoints(...
-            (R_C_W_guess(:,:,2) * corresponding_landmarks) + ...
-            repmat(t_C_W_guess(:,:,2), ...
-            [1 size(corresponding_landmarks, 2)]), K);
-        difference = matched_query_keypoints - projected_points;
-        errors = sum(difference.^2, 1);
-        alternative_is_inlier = errors < pixel_tolerance^2;
-        if nnz(alternative_is_inlier) > nnz(is_inlier)
-            is_inlier = alternative_is_inlier;
-        end
-    end
+    difference = reprojected_points - matched_query_keypoints; 
+    pixel_errors = sqrt( sum(difference.^2, 1) );
+    inlier_mask = (pixel_errors < pixel_tolerance);
+    n_inliers =  length( pixel_errors( pixel_errors < pixel_tolerance) );
     
-    if tweaked_for_more
-        min_inlier_count = 30;
-    else
-        min_inlier_count = 6;
+    % update
+    if n_inliers > best_n_inliers
+       best_n_inliers = n_inliers;
+       best_inlier_mask = inlier_mask;
     end
+    max_num_inliers_history(i) = best_n_inliers; 
     
-    if nnz(is_inlier) > max_num_inliers && ...
-            nnz(is_inlier) >= min_inlier_count
-        max_num_inliers = nnz(is_inlier);        
-        best_inlier_mask = is_inlier;
-    end
-    
-    max_num_inliers_history(i) = max_num_inliers;
 end
 
-if max_num_inliers == 0
+% DLT with found inliers
+if best_n_inliers == 0
     R_C_W = [];
     t_C_W = [];
 else
@@ -130,51 +106,5 @@ else
     R_C_W = M_C_W(:, 1:3);
     t_C_W = M_C_W(:, end);
 end
-
-
-%% myRANSAC with DLT 
-% clc
-% n_iterations = 1; %2000; 
-% s = 5; 
-% [H, W] = size(query_image);
-% 
-% for i = 1:n_iterations
-%     % randomly sample to get 8 matches
-%     chosen_matches = datasample(found_matches,s,2,'Replace',false); 
-%     % chosen_matches = found_matches(:,j:j+7); % tmp
-%     
-%     % convert 
-%     query_homog_coord = K\[query_keypoints(:,chosen_matches(1,:));ones(1,s)];      % [y1..y8;x1..x8;1..1]
-%     
-% %     % 2 view structure from motion: calculate essential matrix and corresponding R,t
-% %     E = estimateEssentialMatrix(database_homog_coord,query_homog_coord, K, K); 
-% %     [Rots,u3] = decomposeEssentialMatrix(E);
-% %     [R, T] = disambiguateRelativePose(Rots,u3,database_homog_coord,query_homog_coord,K,K);
-%     
-%     % project world points to image frame
-%     points_3d = p_W_landmarks(:,chosen_matches(2,:));
-%     M = estimatePoseDLT(query_homog_coord, points_3d); 
-%     R = M(1:3,1:3); t = M(1:3,4);
-%     reproj_pixel_coord = projectPoints(p_W_landmarks', K, M)'; 
-% 
-%     % get number of inliers
-%     max_dist_pixels = 10;
-%     diff = abs((reproj_pixel_coord-database_keypoints)); 
-%     dist = sqrt(diff(1,:).^2+diff(2,:).^2);
-%     n_inliers =  numel(dist(dist < max_dist_pixels));
-%     disp(['i = ',num2str(i),': n_inliers = ',num2str(n_inliers)]);
-% 
-%     
-% end
-
-
-%% tmp
-n_matched = 100;
-R_C_W = eye(3); 
-t_C_W = zeros(3,1);
-query_keypoints = zeros(2,1000);
-all_matches = zeros(1,1000);
-best_inlier_mask = ones(1,n_matched);
-max_num_inliers_history = ones(1,2000); 
 
 end
