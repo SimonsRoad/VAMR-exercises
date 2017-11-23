@@ -6,46 +6,36 @@ function [best_guess_history, max_num_inliers_history] = ...
 % max_num_inliers_history is 1xnum_iterations, with the inlier count of the
 %   BEST GUESS SO FAR at each iteration.
 
-%% calculations
-clc
+% rng(2); For our figure.
+num_iterations = 100;
 
-% param
-n_iterations = 100; 
-s = 3;
+best_guess_history = zeros(3, num_iterations);
+max_num_inliers_history = zeros(1, num_iterations);
 
-% init
-n_inliers = 0; 
-best_guess_history = zeros(3,n_iterations);
-max_num_inliers_history = zeros(1,n_iterations);
+best_guess = zeros(3, 1);
+max_num_inliers = 0;
 
-% loop
-for i = 1:n_iterations
-    n_inliers_old = n_inliers;
-    points = datasample(data,s,2,'Replace',false); 
-    P = polyfit(points(1,:),points(2,:),s-1);
-    y = polyval(P,data(1,:));
-    n_inliers = sum( abs(y-data(2,:)) < max_noise ); 
-    
-    if n_inliers > n_inliers_old 
-        % new best guess
-        best_guess_history(:,i) = P';
-    else
-        % old guess is best guess
-        best_guess_history(:,i) = best_guess_history(:,i-1);
-        n_inliers = max_num_inliers_history(i-1);
+rerun_on_inliers = true;
+
+for i = 1:num_iterations
+    % Model based on 3 samples:
+    samples = datasample(data, 3, 2, 'Replace', false);
+    guess = polyfit(samples(1, :), samples(2, :), 2);
+    % Evaluate amount of inliers:    
+    errors = abs(polyval(guess, data(1, :)) - data(2, :));
+    inliers = errors <= max_noise + 1e-5;
+    num_inliers = nnz(inliers);
+    % Determine if the current guess is the best so far.
+    if num_inliers > max_num_inliers
+        if rerun_on_inliers
+            guess = polyfit(data(1, inliers), data(2, inliers), 2);
+        end
+        best_guess = guess';
+        max_num_inliers = num_inliers;
     end
-    max_num_inliers_history(i) = n_inliers;
-    
+    best_guess_history(:, i) = best_guess;
+    max_num_inliers_history(i) = max_num_inliers;
 end
 
-% reestimate using inliers
-P = best_guess_history(:,end);
-y = polyval(P,data(1,:));
-idx = find( abs(y-data(2,:)) < max_noise ); 
-P_new = polyfit(data(1,idx),data(2,idx),s-1);
-y_new = polyval(P_new,data(1,:));
-n_inliers_new = sum( abs(y_new-data(2,:)) < max_noise ); 
-best_guess_history(:,end) = P_new';
-max_num_inliers_history(end) = n_inliers_new;
-
 end
+

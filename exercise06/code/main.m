@@ -1,6 +1,6 @@
 clear all; close all; clc; 
-
 rng(1);
+addpath(genpath(cd));
 
 % Create data for parts 1 and 2
 num_inliers = 20;
@@ -28,11 +28,7 @@ p_W_landmarks = load('../data/p_W_landmarks.txt')';
 % Data for part 4
 database_image = imread('../data/000000.png');
 
-% Dependencies
-addpath(genpath(cd));
-
 %% Part 1 - RANSAC with parabola model
-clc
 [best_guess_history, max_num_inliers_history] = ...
     parabolaRansac(data, max_noise);
 
@@ -62,17 +58,13 @@ subplot(1, 2, 2);
 plot(max_num_inliers_history);
 title('Max num inliers over iterations');
 
+disp('RMS of full fit =');
 x = (0:0.01:1) + xstart;
-RMS_full_fit = rms(polyval(poly, x) - polyval(full_fit, x));
-RMS_ransac = rms(polyval(poly, x) - polyval(best_guess_history(:, end), x));
+disp(rms(polyval(poly, x) - polyval(full_fit, x)));
+disp('RMS of RANSAC =');
+x = (0:0.01:1) + xstart;
+disp(rms(polyval(poly, x) - polyval(best_guess_history(:, end), x)));
 
-if RMS_ransac < RMS_full_fit
-    fprintf(['RMS_ransac = ',num2str(RMS_ransac),' < RMS_ful_fit = ',num2str(RMS_full_fit),'\n'])
-    fprintf('SN:Info: '); cprintf([0,0.5,0],'RANSAC estimation was successful \n')
-else
-    fprintf(['RMS_ransac = ',num2str(RMS_ransac),' > RMS_ful_fit = ',num2str(RMS_full_fit),'\n'])
-    fprintf('SN:Info: '); cprintf([0.9,0,0],'RANSAC estimation failed \n')
-end
 
 %% Parts 2 and 3 - Localization with RANSAC + DLT/P3P
 query_image = imread('../data/000001.png');
@@ -82,7 +74,6 @@ query_image = imread('../data/000001.png');
     ransacLocalization(query_image, database_image,  keypoints, ...
     p_W_landmarks, K);
 
-%%
 disp('Found transformation T_C_W = ');
 disp([R_C_W t_C_W; zeros(1, 3) 1]);
 disp('Estimated inlier ratio is');

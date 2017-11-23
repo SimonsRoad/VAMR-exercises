@@ -8,39 +8,21 @@ function matches = matchDescriptors(...
 % with an SSD < lambda * min(SSD). No two non-zero elements of matches will
 % be equal.
 
-%% calculations
-% query_descriptors = current descriptors
-% database_descriptors = past desctiptors
+[dists,matches] = pdist2(double(database_descriptors)', ...
+    double(query_descriptors)', 'euclidean', 'Smallest', 1);
 
-% bridge
-try
-    % lauched inside matchDescriptors
-    lambda = match_lambda; 
-    query_descriptors = descriptors_2;
-    database_descriptors = descriptors;
-    num = 1;
-catch
-    % launched from main   
-    num = size(query_descriptors,2);
-end
+sorted_dists = sort(dists);
+sorted_dists = sorted_dists(sorted_dists~=0);
+min_non_zero_dist = sorted_dists(1);
 
-% init
-Q = size(query_descriptors,2);
-matches = zeros(1,Q);
+matches(dists >= lambda * min_non_zero_dist) = 0;
 
-% calculate distance
-D = pdist2(query_descriptors',database_descriptors');
-delta = min(min(D))*lambda;
+% remove double matches
+unique_matches = zeros(size(matches));
+[~,unique_match_idxs,~] = unique(matches, 'stable');
+unique_matches(unique_match_idxs) = matches(unique_match_idxs);
 
-for i = 1:num
-   D_i = D(i,:);
-   [dist, idx] = min(D_i);
-   
-   if dist < delta
-       matches(i) = idx; 
-   end
-    
-end
-
+matches = unique_matches;
 
 end
+
