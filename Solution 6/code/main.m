@@ -1,6 +1,6 @@
-clear all; close all; clc; 
+clear all;
+close all;
 rng(1);
-addpath(genpath(cd));
 
 % Create data for parts 1 and 2
 num_inliers = 20;
@@ -27,6 +27,13 @@ p_W_landmarks = load('../data/p_W_landmarks.txt')';
 
 % Data for part 4
 database_image = imread('../data/000000.png');
+
+% Dependencies
+addpath('plot');
+% Replace the following with the path to your DLT code:
+addpath('../../Solution 2/code');
+% Replace the following with the path to your keypoint matcher code:
+addpath('../../Solution 3/code');
 
 %% Part 1 - RANSAC with parabola model
 [best_guess_history, max_num_inliers_history] = ...

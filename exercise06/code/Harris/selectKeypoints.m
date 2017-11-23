@@ -2,38 +2,16 @@ function keypoints = selectKeypoints(scores, num, r)
 % Selects the num best scores as keypoints and performs non-maximum 
 % supression of a (2r + 1)*(2r + 1) box around the current maximum.
 
-%% calculations
-clc;
-
-% bridge
-try
-    % launched inside selectKeypoints
-    scores = harris_scores;
-    num = 16; % num_keypoints;
-    r = 1; % nonmaximum_supression_radius;
-    scores = scores(20:25,20:26);
-catch
-    % launched from main
-end
-
-% init
-[h, w] = size(scores);
-keypoints = zeros(2,num);
-
-% loop over keypoint selection
+keypoints = zeros(2, num);
+temp_scores = padarray(scores, [r r]);
 for i = 1:num
-    % find maximum
-    [~, idx] = max(scores(:));
-    [y, x] = ind2sub([h,w],idx);
-    keypoints(:,i) = [y; x];
-    
-    % non-maxima supression
-    scores(max(1,y-r):min(h,y+r),max(1,x-r):min(w,x+r)) = 0;
-    
+    [~, kp] = max(temp_scores(:));
+    [row, col] = ind2sub(size(temp_scores), kp);
+    kp = [row;col];
+    keypoints(:, i) = kp - r;
+    temp_scores(kp(1)-r:kp(1)+r, kp(2)-r:kp(2)+r) = ...
+        zeros(2*r + 1, 2*r + 1);
 end
 
-
-
-
-
 end
+
