@@ -40,6 +40,13 @@ M2 = K * [R_C2_W, T_C2_W];
 P = linearTriangulation(p1,p2,M1,M2);
 
 %% Visualize the 3-D scene
+% R_W_C2 = roty(30);
+% T_W_C2 = [-1 0 0]';
+% 
+% R_C2_W = R_W_C2';
+% T_C2_W = -R_W_C2'*T_W_C2;
+
+
 figure(1); clf
 subplot(1,3,1)
 
