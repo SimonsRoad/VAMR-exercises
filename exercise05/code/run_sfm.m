@@ -7,8 +7,8 @@ addpath('triangulation/');
 addpath('plot/');
 addpath('utilities/');
 
-img = imread('../data/0001.jpg');
-img_2 = imread('../data/0002.jpg');
+img = imread('../data/fountain_1.jpg');
+img_2 = imread('../data/fountain_2.jpg');
 
 K = [1379.74 0 760.35
     0 1382.08 503.41
