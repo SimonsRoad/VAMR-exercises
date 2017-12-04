@@ -26,13 +26,13 @@ template = getWarpedPatch(I_R, getSimWarp(0,0,0,1), x_T, r_T);
 search = -r_D:r_D; 
 for y = search
     for x = search
-        W = getSimWarp(-x, -y, 0, 1); % translation recovery only
+        W = getSimWarp(x, y, 0, 1); % translation recovery only
         patch = getWarpedPatch(I, W, x_T, r_T);
         
         diff = patch(:) - template(:);
         ssd = sum(diff.^2);
         
-        ssds(y+r_D+1,x+r_D+1) = ssd; 
+        ssds(x+r_D+1,y+r_D+1) = ssd; 
         
     end
 end
