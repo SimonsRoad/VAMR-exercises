@@ -1,4 +1,5 @@
 function I1 = warpImage(I0, W)
+% I1 = warpImage(I0, W); 
 % warps image with given affine warping matrix
 % Input:
 %   I0, original image

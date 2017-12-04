@@ -1,4 +1,5 @@
 function W = getSimWarp(dx, dy, alpha_deg, lambda)
+% W = getSimWarp(dx, dy, alpha_deg, lambda);
 % gives affine transformation matrix
 % Input:
 %   dx, translation in x direction

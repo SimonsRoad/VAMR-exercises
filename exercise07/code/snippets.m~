@@ -1,0 +1,9 @@
+%% idx
+clc
+A = magic(5); 
+[~, idx] = min(A(:));
+[idx_x,idx_y] = ind2sub(size(A),idx);
+dx = [(idx_x), search(idx_y)]; 
+
+
+
