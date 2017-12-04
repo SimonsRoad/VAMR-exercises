@@ -16,6 +16,7 @@ for y = 1:height
         p = floor( W*[x; y; 1] ); % TODO: bilinear interpolation
         if 1 <= p(2) && p(2) <= height && 1 <= p(1) && p(1) <= width
             I1(y,x) = I0(p(2),p(1));
+            I1(p(2))
         end       
     end
 end
