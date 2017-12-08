@@ -34,7 +34,7 @@ imagesc(template);
 axis equal;
 axis off;
 title('Template');
-%%
+
 subplot(1, 2, 2);
 W = getSimWarp(10, 6, 0, 1);
 I = warpImage(I_R, W);

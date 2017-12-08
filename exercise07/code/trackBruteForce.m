@@ -15,17 +15,17 @@ function [dx, ssds] = trackBruteForce(I_R, I, x_T, r_T, r_D)
 %   ssds, s_D x s_D, errors, s_D = 2*r_D+1
 
 %% calculations
-clc
 
 % init 
 s_D = 2*r_D+1;
 ssds = zeros(s_D,s_D); 
-template = getWarpedPatch(I_R, getSimWarp(0,0,0,1), x_T, r_T);
-
+W0 = getSimWarp(0, 0, 0, 1);
+template = getWarpedPatch(I_R, W0, x_T, r_T);
+        
 % loop through all guesses
-search = -r_D:r_D; 
-for y = search
-    for x = search
+search_area = -r_D:r_D; 
+for y = search_area
+    for x = search_area
         W = getSimWarp(x, y, 0, 1); % translation recovery only
         patch = getWarpedPatch(I, W, x_T, r_T);
         
@@ -40,6 +40,6 @@ end
 % get best guess for displacement (and thus W)
 [~, idx] = min(ssds(:));
 [idx_row,idx_col] = ind2sub(size(ssds),idx);
-dx = [search(idx_col), search(idx_row)]; 
+dx = [search_area(idx_col), search_area(idx_row)]; 
 
 end
