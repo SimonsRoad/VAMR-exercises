@@ -61,6 +61,7 @@ toc
 disp(['Point moved by ' num2str(W(:, end)') ', should move by (-10, -6)']);
 
 %% Part 4: Applying KLT to KITTI
+clc
 I_R = imread('../data/000000.png');
 I_R = imresize(I_R, 0.25);
 keypoints_rc = load('../data/keypoints.txt') / 4;
@@ -71,7 +72,7 @@ hold on;
 plot(keypoints(1, :), keypoints(2, :), 'rx');
 hold off;
 I_prev = I_R;
-pause(0.1);
+pause(0.01);
 
 for i = 1:20
     I = imread(sprintf('../data/%06d.png',i));
@@ -88,7 +89,7 @@ for i = 1:20
     plotMatches(1:size(keypoints, 2), flipud(keypoints), flipud(kpold));
     hold off;
     I_prev = I;
-    pause(0.1);
+    pause(0.01);
 end
 
 %% Part 5: Outlier rejection with bidirectional error
@@ -102,7 +103,7 @@ hold on;
 plot(keypoints(1, :), keypoints(2, :), 'rx');
 hold off;
 I_prev = I_R;
-pause(0.1);
+pause(0.01);
 
 r_T = 15;
 num_iters = 50;
@@ -125,5 +126,5 @@ for i = 1:20
     plotMatches(1:size(keypoints, 2), flipud(keypoints), flipud(kpold));
     hold off;
     I_prev = I;
-    pause(0.1);
+    pause(0.01);
 end
